@@ -35,10 +35,16 @@ const Table = struct {
 
 // const ABIDataJustTakeALook = struct {
 
+const SubChunkView = extern struct {
+    data: [*]u8,
+    offsets: [*]usize,
+    lengths: [*]usize,
+    num_of_items: usize,
+};
+
 const ChunkView = extern struct {
-    sub_chunks: [*][*]u8,
+    sub_chunks: [*]SubChunkView,
     referenced_chunks: [*]usize,
-    sub_chunk_lens: [*]usize,
     num_of_sub_chunks: usize,
 };
 
