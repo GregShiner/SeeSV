@@ -145,13 +145,13 @@ impl<'a> ColumnView<'a> {
             #[rustfmt::skip]
             let chunks = match column.data_type {
                 ExternalDataType::Int => ChunkViews::Int(
-                    Self::convert_chunks(external_chunks)
+                    Self::convert_chunks::<IntValues>(external_chunks)
                 ),
                 ExternalDataType::Float => ChunkViews::Float(
-                    Self::convert_chunks(external_chunks)
+                    Self::convert_chunks::<FloatValues>(external_chunks)
                 ),
                 ExternalDataType::String => ChunkViews::String(
-                    Self::convert_chunks(external_chunks)
+                    Self::convert_chunks::<StringValues>(external_chunks)
                 ),
             };
             ColumnView { name, chunks }
