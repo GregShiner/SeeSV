@@ -3,19 +3,19 @@ const Block = @Vector(BlockSize, u8);
 
 var gpa: std.heap.GeneralPurposeAllocator(.{}) = .init;
 
-pub export fn parse_csv(file_path: [*:0]const u8, delimiter: c_char) callconv(.c) *c_int { //TODO: fix type
+pub export fn parse_csv(file_path: [*:0]const u8, delimiter: c_char) callconv(.c) [*c]u8 { //TODO: fix type
     const path: []const u8 = std.mem.span(file_path);
 
     const file = fs.cwd().openFile(path, .{}) catch |err| {
         c_error.setErrNo(err);
-        return undefined;
+        return @ptrFromInt(0);
     };
 
     defer file.close();
 
     const file_size = file.getEndPos() catch |err| {
         c_error.setErrNo(err);
-        return undefined;
+        return @ptrFromInt(0);
     };
 
     const ptr = std.posix.mmap(
@@ -27,7 +27,7 @@ pub export fn parse_csv(file_path: [*:0]const u8, delimiter: c_char) callconv(.c
         0,
     ) catch {
         // errno is already set for libc functions
-        return undefined;
+        return @ptrFromInt(0);
     };
 
     defer std.posix.munmap(ptr);
@@ -38,19 +38,19 @@ pub export fn parse_csv(file_path: [*:0]const u8, delimiter: c_char) callconv(.c
 
     const newlines = prescan_csv(alloc, ptr, '\n') catch |err| {
         c_error.setErrNo(err);
-        return undefined;
+        return @ptrFromInt(0);
     };
 
     const delimiters = prescan_csv(alloc, ptr, @intCast(delimiter)) catch |err| {
         c_error.setErrNo(err);
-        return undefined;
+        return @ptrFromInt(0);
     };
 
     std.debug.print("newlines: {any}\n", .{newlines});
     std.debug.print("delimiters: {any}\n", .{delimiters});
 
     // TODO: read in the data (and multi threading)
-    return undefined;
+    return @ptrFromInt(0);
 }
 
 /// Caller owns the returned memory.
