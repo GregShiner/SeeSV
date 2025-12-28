@@ -24,7 +24,6 @@ mod proptests {
     }
 
     proptest! {
-        // Test with random string lengths and content
         #[test]
         fn test_string_conversion(
             strings in prop::collection::vec(any::<String>(), 0..50)
@@ -46,11 +45,10 @@ mod proptests {
             }
         }
 
-        // Test edge cases automatically
         #[test]
         fn test_float_special_values(
             values in prop::collection::vec(
-                prop::num::f32::ANY, // Includes NaN, infinity, etc.
+                prop::num::f32::ANY,
                 0..100
             )
         ) {
@@ -78,15 +76,14 @@ mod proptests {
             }
         }
 
-        // Test multiple chunks with varying sizes
         #[test]
-        fn test_multiple_chunks(
-            chunk_sizes in prop::collection::vec(0usize..20, 1..10)
+        fn test_multiple_subchunks(
+            subchunk_sizes in prop::collection::vec(0usize..20, 1..10)
         ) {
             let mut all_test_data = Vec::new();
             let mut external_subchunks = Vec::new();
 
-            for &size in &chunk_sizes {
+            for &size in &subchunk_sizes {
                 let values: Vec<i32> = (0..size as i32).collect();
                 let test_data = TestData::new_int(values);
 
@@ -109,9 +106,9 @@ mod proptests {
 
             unsafe {
                 let chunk: Chunk<'_, IntValues> = Chunk::from_external(&external_chunk);
-                prop_assert_eq!(chunk.sub_chunks.len(), chunk_sizes.len());
+                prop_assert_eq!(chunk.sub_chunks.len(), subchunk_sizes.len());
 
-                for (i, &expected_size) in chunk_sizes.iter().enumerate() {
+                for (i, &expected_size) in subchunk_sizes.iter().enumerate() {
                     prop_assert_eq!(chunk.sub_chunks[i].values.len(), expected_size);
                 }
             }
