@@ -51,7 +51,7 @@ pub TableRef: ast::TableRef = {
 }
 
 pub SelectQuery: ast::SelectQuery = {
-    SELECT <select_exprs:SelectExprs> FROM <table_ref:String> r"\s*;" => ast::SelectQuery {<>}
+    SELECT <select_exprs:SelectExprs> FROM <table_ref:TableRef> r"\s*;" => ast::SelectQuery {<>}
 };
 
 pub Query: ast::Query = {
