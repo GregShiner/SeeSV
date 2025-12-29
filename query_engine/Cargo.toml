@@ -4,8 +4,14 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+lalrpop = { version = "0.22.2", features = ["lexer"] }
+lalrpop-util = { version = "0.22.2", features = ["lexer"] }
 libc = "0.2.178"
 logos = "0.16.0"
+plex = "0.3.1"
 
 [dev-dependencies]
 proptest = "1.9.0"
+
+[build-dependencies]
+lalrpop = "0.22.2"
