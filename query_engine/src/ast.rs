@@ -15,6 +15,7 @@ pub type SelectExprs = Vec<SelectExpr>;
 pub enum SelectExpr {
     All,
     Immediate(Immediate),
+    Column(Identifier),
 }
 
 #[derive(Debug)]
@@ -27,5 +28,7 @@ pub enum Immediate {
 #[derive(Debug)]
 pub enum TableRef {
     String(String),
-    Identifier(String),
+    Identifier(Identifier),
 }
+
+pub type Identifier = String;

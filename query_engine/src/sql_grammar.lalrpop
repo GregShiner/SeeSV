@@ -33,7 +33,8 @@ pub Immediate: ast::Immediate = {
 
 pub SelectExpr: ast::SelectExpr = {
     "*" => ast::SelectExpr::All,
-    Immediate => ast::SelectExpr::Immediate(<>)
+    Immediate => ast::SelectExpr::Immediate(<>),
+    Identifier => ast::SelectExpr::Column(<>),
 };
 
 pub SelectExprs = Comma<SelectExpr>;
