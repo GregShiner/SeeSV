@@ -4,7 +4,10 @@ grammar;
 
 Int: i32 = INT => <>.parse().unwrap();
 Float: f32 = FLOAT => <>.parse().unwrap();
-String: String = <s:STRING> => s[1..s.len()-1].to_owned();
+String: String = {
+    <s:DOUBLE_STRING> => s[1..s.len()-1].to_owned(),
+    <s:SINGLE_STRING> => s[1..s.len()-1].to_owned()
+};
 Identifier: String = <s:ID> => s.to_owned();
 
 match {
@@ -12,7 +15,8 @@ match {
 } else {
     r"-?\d*.\d+" => FLOAT,
 } else {
-    r#""(?:\\(?:["\\/bfnrt]|u[a-fA-F0-9]{4})|[^"\\\x00-\x1F\x7F]+)*""# => STRING,
+    r#""(?:\\(?:["\\/bfnrt]|u[a-fA-F0-9]{4})|[^"\\\x00-\x1F\x7F]+)*""# => DOUBLE_STRING,
+    r#"'(?:\\(?:['\\/bfnrt]|u[a-fA-F0-9]{4})|[^'\\\x00-\x1F\x7F]+)*'"# => SINGLE_STRING,
 } else {
     r"(?i)SELECT\s+" => SELECT,
     r"(?i)\s+FROM\s+" => FROM,
