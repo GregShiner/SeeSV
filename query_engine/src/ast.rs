@@ -6,7 +6,7 @@ pub enum Query {
 #[derive(Debug)]
 pub struct SelectQuery {
     pub select_exprs: SelectExprs,
-    pub table_ref: TableRef,
+    pub table_ref: Option<TableRef>,
 }
 
 pub type SelectExprs = Vec<SelectExpr>;
