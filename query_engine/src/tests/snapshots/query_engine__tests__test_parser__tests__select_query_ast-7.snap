@@ -1,0 +1,9 @@
+---
+source: src/tests/test_parser.rs
+expression: "(input, query)"
+---
+- SELECT 5.5;
+- select_exprs:
+    - Immediate:
+        Float: 5.5
+  table_ref: ~

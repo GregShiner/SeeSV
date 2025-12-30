@@ -1,0 +1,9 @@
+---
+source: src/tests/test_parser.rs
+expression: "(input, query)"
+---
+- "SELECT \"column\";"
+- select_exprs:
+    - Immediate:
+        String: column
+  table_ref: ~

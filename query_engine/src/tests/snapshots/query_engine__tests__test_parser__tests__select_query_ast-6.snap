@@ -1,0 +1,9 @@
+---
+source: src/tests/test_parser.rs
+expression: "(input, query)"
+---
+- SELECT 5;
+- select_exprs:
+    - Immediate:
+        Int: 5
+  table_ref: ~

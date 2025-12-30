@@ -1,0 +1,9 @@
+---
+source: src/tests/test_parser.rs
+expression: "(input, query)"
+---
+- SELECT column FROM users;
+- select_exprs:
+    - Column: column
+  table_ref:
+    Identifier: users
