@@ -3,7 +3,8 @@ source: src/tests/test_parser.rs
 expression: "(input, query)"
 ---
 - SELECT * FROM users;
-- select_exprs:
-    - All
-  table_ref:
-    Identifier: users
+- Select:
+    select_exprs:
+      - All
+    table_ref:
+      Identifier: users
