@@ -3,7 +3,7 @@ mod external;
 mod parser;
 mod tests;
 
-use crate::parser::sql_grammar;
+use crate::parser::grammar;
 use std::io::{self, Read};
 
 fn main() {
@@ -15,7 +15,7 @@ fn main() {
 
     // Parse the input
     // Assuming your parser module is named 'parser' and has a parser called 'ProgramParser'
-    let parser = sql_grammar::QueryParser::new();
+    let parser = grammar::QueryParser::new();
 
     match parser.parse(&input) {
         Ok(cst) => {
