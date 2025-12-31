@@ -1,6 +1,7 @@
 mod ast;
 mod external;
 mod parser;
+mod planner;
 mod tests;
 
 use crate::parser::grammar;
