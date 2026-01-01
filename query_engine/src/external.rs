@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 use core::slice;
+use std::ffi::NulError;
 
 #[repr(C)]
 pub enum ExternalDataType {
@@ -39,8 +40,8 @@ struct ExternalSubChunkView {
     num_of_items: usize,
 }
 
-struct TableView<'a> {
-    columns: Vec<ColumnView<'a>>,
+pub struct TableView<'a> {
+    pub columns: Vec<ColumnView<'a>>,
 }
 
 pub struct ColumnView<'a> {
@@ -172,7 +173,7 @@ impl<'a> ColumnView<'a> {
 }
 
 impl<'a> TableView<'a> {
-    unsafe fn from_external(table: &'a ExternalTableView) -> TableView<'a> {
+    fn from_external(table: ExternalTableView) -> TableView<'a> {
         unsafe {
             let external_columns = slice::from_raw_parts(table.columns, table.num_of_columns);
             TableView {
@@ -186,5 +187,12 @@ impl<'a> TableView<'a> {
 }
 
 unsafe extern "C" {
-    fn parse_csv(file_name: *const std::ffi::c_char) -> ExternalTableView;
+    fn parse_csv(file_name: *const libc::c_char) -> ExternalTableView;
+}
+
+pub fn load_csv<'a>(file_name: &str) -> Result<TableView<'a>, NulError> {
+    let c_filename = std::ffi::CString::new(file_name)?;
+    let external = unsafe { parse_csv(c_filename.as_ptr()) };
+    // TODO: Add error checks
+    Ok(TableView::from_external(external))
 }
