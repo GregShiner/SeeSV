@@ -242,7 +242,7 @@ pub(crate) mod tests {
         };
 
         unsafe {
-            let table = TableView::from_external(&external_table);
+            let table = TableView::from_external(external_table);
             assert_eq!(table.columns.len(), 2);
             assert_eq!(table.columns[0].name, "int_col");
             assert_eq!(table.columns[1].name, "float_col");
