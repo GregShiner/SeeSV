@@ -1,6 +1,4 @@
 //! By convention, root.zig is the root source file when making a library.
-const std = @import("std");
-
 const DataType = enum {
     INT,
     FLOAT,
@@ -9,28 +7,44 @@ const DataType = enum {
 
 // const ZigDataDoNotTouch = struct {
 
-const Chunk = struct {
-    data: []u8,
-    offsets: []usize,
-    data_lens: []usize,
+pub const Chunk = struct {
 
     // pub fn put(i: usize) []u8 {
     //     return data
     // }
 };
 
-const Column = struct {
-    name: []u8,
-    name_len: usize,
-    chunks: []Chunk,
-    num_of_chunks: usize,
+pub const Column = struct {
+    name: []const u8,
+    data: ArrayList(u8),
+    offsets: ArrayList(usize),
+    data_lens: ArrayList(usize),
     data_type: DataType,
+
+    /// duplicate `name` into heap memory
+    pub fn init(gpa: Allocator, name: []const u8, data_type: DataType) Allocator.Error!Column {
+        const column_name = try gpa.dupe(u8, name);
+
+        return Column{
+            .name = column_name,
+            .data = .empty,
+            .offsets = .empty,
+            .data_lens = .empty,
+            .data_type = data_type,
+        };
+    }
+
+    pub fn free(self: *Column, gpa: Allocator) void {
+        gpa.free(self.name);
+        self.data.deinit(gpa);
+        self.offsets.deinit(gpa);
+        self.data_lens.deinit(gpa);
+    }
 };
 
-const Table = struct {
+pub const Table = struct {
     // metadata: []u8,
     columns: []Column,
-    num_of_columns: usize,
 };
 
 // const ABIDataJustTakeALook = struct {
@@ -60,3 +74,7 @@ const TableView = extern struct {
     columns: [*]ColumnView,
     num_of_columns: usize,
 };
+
+const std = @import("std");
+const ArrayList = std.ArrayList;
+const Allocator = std.mem.Allocator;
