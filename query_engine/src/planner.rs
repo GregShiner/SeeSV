@@ -42,9 +42,9 @@ pub type NodeId = usize;
 
 #[derive(Debug)]
 pub struct PlanNode {
-    id: NodeId,
-    operator: Operation,
-    dependencies: Vec<NodeId>, // Nodes this depends on (inputs)
+    pub id: NodeId,
+    pub operator: Operation,
+    pub dependencies: Vec<NodeId>, // Nodes this depends on (inputs)
 }
 
 #[derive(Debug)]
