@@ -5,6 +5,6 @@ expression: "(input, query)"
 - SELECT 5.5;
 - Select:
     select_exprs:
-      - Immediate:
+      - Literal:
           Float: 5.5
     table_ref: ~

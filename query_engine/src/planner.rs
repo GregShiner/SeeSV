@@ -9,12 +9,12 @@ pub enum Value {
     Float(f32),
 }
 
-impl From<&ast::Immediate> for Value {
-    fn from(val: &ast::Immediate) -> Self {
+impl From<&ast::Literal> for Value {
+    fn from(val: &ast::Literal) -> Self {
         match val {
-            ast::Immediate::String(s) => Value::String(s.clone()),
-            ast::Immediate::Int(i) => Value::Int(*i),
-            ast::Immediate::Float(f) => Value::Float(*f),
+            ast::Literal::String(s) => Value::String(s.clone()),
+            ast::Literal::Int(i) => Value::Int(*i),
+            ast::Literal::Float(f) => Value::Float(*f),
         }
     }
 }
@@ -132,7 +132,7 @@ impl From<SelectExprs> for Operation {
             .iter()
             .map(|s| match s {
                 ast::SelectExpr::All => ProjectionColumn::All,
-                ast::SelectExpr::Immediate(i) => ProjectionColumn::Expr(Expr::Value(i.into())),
+                ast::SelectExpr::Literal(i) => ProjectionColumn::Expr(Expr::Value(i.into())),
                 ast::SelectExpr::Column(c) => ProjectionColumn::Column(c.clone()),
             })
             .collect();

@@ -25,15 +25,15 @@ match {
     _
 }
 
-pub Immediate: ast::Immediate = {
-    Int => ast::Immediate::Int(<>),
-    Float => ast::Immediate::Float(<>),
-    String => ast::Immediate::String(<>),
+pub Literal: ast::Literal = {
+    Int => ast::Literal::Int(<>),
+    Float => ast::Literal::Float(<>),
+    String => ast::Literal::String(<>),
 };
 
 pub SelectExpr: ast::SelectExpr = {
     "*" => ast::SelectExpr::All,
-    Immediate => ast::SelectExpr::Immediate(<>),
+    Literal => ast::SelectExpr::Literal(<>),
     Identifier => ast::SelectExpr::Column(<>),
 };
 

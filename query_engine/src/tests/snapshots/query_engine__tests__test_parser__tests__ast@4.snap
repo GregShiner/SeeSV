@@ -5,6 +5,6 @@ expression: "(input, query)"
 - "SELECT \"column\";"
 - Select:
     select_exprs:
-      - Immediate:
+      - Literal:
           String: column
     table_ref: ~
