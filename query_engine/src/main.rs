@@ -1,5 +1,4 @@
 mod ast;
-mod executor;
 mod external;
 mod parser;
 mod planner;
