@@ -21,21 +21,17 @@ impl From<&ast::Literal> for Value {
 
 #[derive(Debug)]
 pub enum Expr {
-    Value(Value), // Literal Value
-}
-
-#[derive(Debug)]
-pub enum ProjectionColumn {
-    All,            // *
-    Expr(Expr),     // Arbitrary expressions
-    Column(String), // Column name
+    All,             // *
+    Expr(Box<Expr>), // Arbitrary expressions
+    Column(String),  // Column name
+    Value(Value),    // Literal value
 }
 
 #[derive(Debug)]
 pub enum Operation {
-    Scan(ast::TableRef),            // FROM Clauses
-    Filter(Expr),                   // WHERE Clauses
-    Project(Vec<ProjectionColumn>), // SELECT columns
+    Scan(ast::TableRef), // FROM Clauses
+    Filter(Expr),        // WHERE Clauses
+    Project(Vec<Expr>),  // SELECT columns
 }
 
 pub type NodeId = usize;
@@ -131,9 +127,9 @@ impl From<SelectExprs> for Operation {
         let projection_columns: Vec<_> = val
             .iter()
             .map(|s| match s {
-                ast::SelectExpr::All => ProjectionColumn::All,
-                ast::SelectExpr::Literal(i) => ProjectionColumn::Expr(Expr::Value(i.into())),
-                ast::SelectExpr::Column(c) => ProjectionColumn::Column(c.clone()),
+                ast::SelectExpr::All => Expr::All,
+                ast::SelectExpr::Literal(i) => Expr::Expr(Box::new(Expr::Value(i.into()))),
+                ast::SelectExpr::Column(c) => Expr::Column(c.clone()),
             })
             .collect();
         Operation::Project(projection_columns)
