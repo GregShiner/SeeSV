@@ -103,7 +103,7 @@ impl From<ast::SelectQuery> for ExecutionPlan {
         } = val;
 
         // scan_op is Some if the query has a FROM clause
-        let scan_op = table_ref.map(Operation::Scan);
+        let scan_op: Option<Operation> = table_ref.map(Operation::Scan);
         let proj_op: Operation = select_exprs.into();
 
         let mut execution_plan = ExecutionPlan::new();

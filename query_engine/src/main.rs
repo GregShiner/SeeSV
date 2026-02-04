@@ -1,4 +1,5 @@
 mod ast;
+mod column_iter;
 mod external;
 mod parser;
 mod planner;
