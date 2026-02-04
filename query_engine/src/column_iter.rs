@@ -1,6 +1,4 @@
-use std::iter::FlatMap;
-
-use crate::external::{Chunk, IntValues, SubChunk};
+use crate::external::{Chunk, FloatValues, IntValues, StringValues};
 
 enum ThunkedChunk<T: Sized, I: IntoIterator<Item = T>> {
     Unevaluated(I),
@@ -10,10 +8,15 @@ enum ThunkedChunk<T: Sized, I: IntoIterator<Item = T>> {
 impl<T: Sized, I: std::iter::IntoIterator<Item = T>> ThunkedChunk<T, I> {
     fn read(&mut self) -> &[T] {
         // If self hasnt been evaluated yet
-        if let ThunkedChunk::Unevaluated(iterator) = self {
-            // Evaluate the iterator and collect the result into a vector
-            let items: Vec<T> = iterator.into_iter.collect(); // TODO: realloc go brrr
-            *self = ThunkedChunk::Evaluated(items);
+        if let ThunkedChunk::Unevaluated(_) = self {
+            // Take ownership of the iterator, replacing it with a temporary empty vec
+            let iterator = std::mem::replace(self, ThunkedChunk::Evaluated(Vec::new()));
+
+            // Now we can consume the iterator
+            if let ThunkedChunk::Unevaluated(iter) = iterator {
+                let items: Vec<T> = iter.into_iter().collect();
+                *self = ThunkedChunk::Evaluated(items);
+            }
         }
         // Else, self has already been evaluated
 
@@ -25,40 +28,33 @@ impl<T: Sized, I: std::iter::IntoIterator<Item = T>> ThunkedChunk<T, I> {
 }
 
 impl<'a> IntoIterator for Chunk<'a, IntValues<'a>> {
-    type Item = i32;
+    type Item = &'a i32;
 
-    type IntoIter = FlatMap;
+    type IntoIter = Box<dyn Iterator<Item = &'a i32> + 'a>;
 
-    fn into_iter(
-        self,
-    ) -> FlatMap<
-        std::slice::Iter<'a, SubChunk<'a, &'a [i32]>>,
-        &'a [i32],
-        impl FnMut(&crate::external::SubChunk<'a, &'a [i32]>) -> &'a [i32],
-    > {
-        self.sub_chunks.iter().flat_map(|s| s.values)
+    fn into_iter(self) -> Self::IntoIter {
+        Box::new(self.sub_chunks.into_iter().flat_map(|s| s.values.iter()))
     }
 }
-/* impl<'a> Iterator for Chunk<'a, IntValues<'a>> {
-    type Item = i32;
 
-    fn next(&mut self) -> Option<Self::Item> {
-        /*
-         *
-         * */
-        // if
-        // if let Some(sub_chunk) = self.sub_chunks.get(self.current_sub_chunk) {
-        //     if let Some(value) = sub_chunk.values.get(self.current_index) {
-        //         self.current_index += 1;
-        //         return Some(value);
-        //     } else {
-        //         self.current_sub_chunk += 1;
-        //         self.current_index = 0;
-        //
-        //     }
-        // } else {
-        //     self.current_sub_chunk += 1;
-        //     self.current_index = 0;
-        // }
+impl<'a> IntoIterator for Chunk<'a, FloatValues<'a>> {
+    type Item = &'a f32;
+    type IntoIter = Box<dyn Iterator<Item = &'a f32> + 'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        Box::new(self.sub_chunks.into_iter().flat_map(|s| s.values.iter()))
     }
-} */
+}
+
+impl<'a> IntoIterator for Chunk<'a, StringValues<'a>> {
+    type Item = &'a str;
+    type IntoIter = Box<dyn Iterator<Item = &'a str> + 'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        Box::new(
+            self.sub_chunks
+                .into_iter()
+                .flat_map(|s| s.values.into_iter()),
+        )
+    }
+}

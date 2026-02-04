@@ -58,8 +58,6 @@ pub enum ChunkViews<'a> {
 
 pub struct Chunk<'a, T> {
     pub sub_chunks: Vec<SubChunk<'a, T>>,
-    pub current_sub_chunk: usize, // Index to sub chunk
-    pub current_index: usize,     // Index to value within sub chunk
 }
 
 pub struct SubChunk<'a, T> {
@@ -134,11 +132,7 @@ where
                 .iter()
                 .map(|external_sub_chunk| SubChunk::from_external(external_sub_chunk))
                 .collect();
-            Chunk {
-                sub_chunks,
-                current_sub_chunk: 0,
-                current_index: 0,
-            }
+            Chunk { sub_chunks }
         }
     }
 }
