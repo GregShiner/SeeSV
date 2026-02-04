@@ -17,13 +17,13 @@ pub type SelectExprs = Vec<SelectExpr>;
 #[cfg_attr(test, derive(serde::Serialize))]
 pub enum SelectExpr {
     All,
-    Immediate(Immediate),
+    Literal(Literal),
     Column(Identifier),
 }
 
 #[derive(Debug, PartialEq)]
 #[cfg_attr(test, derive(serde::Serialize))]
-pub enum Immediate {
+pub enum Literal {
     String(String),
     Int(i32),
     Float(f32),
