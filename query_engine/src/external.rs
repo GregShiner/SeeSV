@@ -10,37 +10,38 @@ pub enum ExternalDataType {
 }
 
 #[repr(C)]
-struct ExternalTableView {
-    columns: *const ExternalColumnView,
-    num_of_columns: usize,
+pub(crate) struct ExternalTableView {
+    pub(crate) columns: *const ExternalColumnView,
+    pub(crate) num_of_columns: usize,
 }
 
 #[repr(C)]
-struct ExternalColumnView {
-    name: *const u8,
-    name_len: usize,
-    chunks: *const ExternalChunkView,
-    num_of_chunks: usize,
-    data_type: ExternalDataType,
+pub(crate) struct ExternalColumnView {
+    pub(crate) name: *const u8,
+    pub(crate) name_len: usize,
+    pub(crate) chunks: *const ExternalChunkView,
+    pub(crate) num_of_chunks: usize,
+    pub(crate) data_type: ExternalDataType,
 }
 
 #[repr(C)]
-struct ExternalChunkView {
-    sub_chunks: *const ExternalSubChunkView,
-    referenced_chunks: *const usize,
-    num_of_sub_chunks: usize,
+pub(crate) struct ExternalChunkView {
+    pub(crate) sub_chunks: *const ExternalSubChunkView,
+    pub(crate) referenced_chunks: *const usize,
+    pub(crate) num_of_sub_chunks: usize,
+    pub(crate) data_type: ExternalDataType,
 }
 
 #[repr(C)]
-struct ExternalSubChunkView {
-    data: *const u8,
-    offsets: *const usize,
-    lengths: *const usize,
-    num_of_items: usize,
+pub(crate) struct ExternalSubChunkView {
+    pub(crate) data: *const u8,
+    pub(crate) offsets: *const usize,
+    pub(crate) lengths: *const usize,
+    pub(crate) num_of_items: usize,
 }
 
-struct TableView<'a> {
-    columns: Vec<ColumnView<'a>>,
+pub struct TableView<'a> {
+    pub columns: Vec<ColumnView<'a>>,
 }
 
 pub struct ColumnView<'a> {
@@ -67,11 +68,11 @@ pub type IntValues<'a> = &'a [i32];
 pub type FloatValues<'a> = &'a [f32];
 pub type StringValues<'a> = Vec<&'a str>;
 
-trait FromExternalSubChunk<'a>: Sized {
+pub(crate) trait FromExternalSubChunk<'a>: Sized {
     unsafe fn from_external(sub_chunk: &'a ExternalSubChunkView) -> Self;
 }
 
-trait FromExternalChunk<'a> {
+pub(crate) trait FromExternalChunk<'a> {
     unsafe fn from_external(chunk: &'a ExternalChunkView) -> Self;
 }
 
@@ -136,7 +137,7 @@ where
 }
 
 impl<'a> ColumnView<'a> {
-    unsafe fn from_external(column: &'a ExternalColumnView) -> ColumnView<'a> {
+    pub(crate) unsafe fn from_external(column: &'a ExternalColumnView) -> ColumnView<'a> {
         unsafe {
             let name =
                 str::from_utf8_unchecked(slice::from_raw_parts(column.name, column.name_len));
@@ -172,7 +173,7 @@ impl<'a> ColumnView<'a> {
 }
 
 impl<'a> TableView<'a> {
-    unsafe fn from_external(table: &'a ExternalTableView) -> TableView<'a> {
+    pub(crate) unsafe fn from_external(table: &'a ExternalTableView) -> TableView<'a> {
         unsafe {
             let external_columns = slice::from_raw_parts(table.columns, table.num_of_columns);
             TableView {
